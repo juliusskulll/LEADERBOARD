@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fortnite Rival Leaderboard Checker</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Fortnite Rival Wins Checker</h1>
+
+  <input type="number" id="placement" placeholder="Enter placement (e.g. 500)">
+  <button onclick="checkPlacement()">Check</button>
+
+  <div id="result"></div>
+
+  <script>
+    let leaderboardData = [];
+
+    async function loadLeaderboard() {
+      try {
+        // ⚠️ Replace with proxy if needed
+        const res = await fetch("https://your-proxy-url.com/leaderboard");
+        const data = await res.json();
+
+        leaderboardData = data; 
+        console.log("Leaderboard loaded", leaderboardData);
+      } catch (err) {
+        document.getElementById("result").innerText =
+          "Error loading leaderboard (CORS likely blocked)";
+      }
+    }
+
+    function checkPlacement() {
+      const placement = parseInt(document.getElementById("placement").value);
+
+      if (!leaderboardData.length) {
+        document.getElementById("result").innerText = "Leaderboard not loaded yet.";
+        return;
+      }
+
+      const player = leaderboardData.find(p => p.rank === placement);
+
+      if (player) {
+        document.getElementById("result").innerText =
+          `Top ${placement} requires ~${player.points} points`;
+      } else {
+        document.getElementById("result").innerText =
+          "Placement not found.";
+      }
+    }
+
+    loadLeaderboard();
+  </script>
+
+</body>
+</html>
