@@ -37,7 +37,7 @@
     async function loadLeaderboard() {
       try {
         // ⚠️ Replace with proxy if needed
-        const res = await fetch("https://your-proxy-url.com/leaderboard");
+        const res = await fetch("https://api.allorigins.win/raw?url=https://showdown.fortnite.com/en-US/creator-leaderboard")
         const data = await res.json();
 
         leaderboardData = data; 
