@@ -1,29 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FortniteTracker Screenshot</title>
+  <title>Fortnite Tracker Screenshot Tool</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #0f172a;
+      color: white;
+      padding: 30px;
+    }
+
+    input {
+      width: 60%;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #22c55e;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    img {
+      margin-top: 20px;
+      max-width: 90%;
+      border-radius: 10px;
+      border: 2px solid #333;
+    }
+  </style>
 </head>
 <body>
-  <h1>FortniteTracker Leaderboard</h1>
+
+  <h1>Fortnite Tracker Screenshot Tool</h1>
+
+  <input
+    id="urlInput"
+    placeholder="Paste FortniteTracker URL here..."
+    value="https://fortnitetracker.com/leaderboards"
+  />
+
+  <br>
+
   <button onclick="takeScreenshot()">Capture</button>
-  <br><br>
-  <img id="result" style="max-width:100%;" />
+  <button onclick="downloadScreenshot()">Download</button>
+  <button onclick="startAuto()">Auto Refresh</button>
+  <button onclick="stopAuto()">Stop</button>
+
+  <br>
+
+  <img id="result" />
 
   <script>
-    <input id="urlInput" placeholder="Paste FortniteTracker URL" size="50">
-<button onclick="takeScreenshot()">Capture</button>
+    let interval;
 
+    function getUrl() {
+      return encodeURIComponent(document.getElementById("urlInput").value);
+    }
 
-function takeScreenshot() {
-  const url = document.getElementById("urlInput").value;
-  const img = document.getElementById("result");
-
-  img.src = "/screenshot?url=" + encodeURIComponent(url) + "&t=" + Date.now();
-}
     function takeScreenshot() {
-      document.getElementById("result").src =
-        "/screenshot?" + new Date().getTime();
+      const img = document.getElementById("result");
+      img.src = "/screenshot?url=" + getUrl() + "&t=" + Date.now();
+    }
+
+    function downloadScreenshot() {
+      const link = document.createElement("a");
+      link.href = "/screenshot?url=" + getUrl();
+      link.download = "leaderboard.png";
+      link.click();
+    }
+
+    function startAuto() {
+      stopAuto();
+      interval = setInterval(() => {
+        takeScreenshot();
+      }, 10000); // every 10 sec
+    }
+
+    function stopAuto() {
+      if (interval) clearInterval(interval);
     }
   </script>
+
 </body>
 </html>
