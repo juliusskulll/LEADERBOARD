@@ -16,8 +16,11 @@ app.get("/screenshot", async (req, res) => {
 
     const page = await browser.newPage();
 
-    await page.goto("https://fortnitetracker.com/leaderboards", {
+    const url = req.query.url || "https://fortnitetracker.com/leaderboards";
+
+    await page.goto(url, {
       waitUntil: "networkidle2"
+});
     });
 
     // Wait for leaderboard table
