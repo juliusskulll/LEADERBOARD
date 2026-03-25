@@ -1,5 +1,5 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const path = require('path');
 const fs = require('fs');
 
@@ -13,13 +13,17 @@ app.use(express.static('public'));
 const screenshotDir = path.join(__dirname, 'screenshots');
 if (!fs.existsSync(screenshotDir)) fs.mkdirSync(screenshotDir);
 
-// Endpoint to take screenshot
 app.get('/screenshot/:username', async (req, res) => {
   const username = req.params.username;
 
   try {
     const url = `https://fortnitetracker.com/profile/all/${encodeURIComponent(username)}`;
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true });
+    const browser = await puppeteer.launch({
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      headless: true,
+    });
+
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.goto(url, { waitUntil: 'networkidle2' });
@@ -35,4 +39,6 @@ app.get('/screenshot/:username', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
