@@ -1,98 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Fortnite Rival Leaderboard Checker</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding: 40px;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 10px;
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 20px;
-    }
-  </style>
+  <title>FortniteTracker Screenshot</title>
 </head>
 <body>
-
-  <h1>Fortnite Rival Wins Checker</h1>
-
-  <input type="number" id="placement" placeholder="Enter placement (e.g. 500)">
-  <button onclick="checkPlacement()">Check</button>
-
-  <div id="result"></div>
+  <h1>FortniteTracker Leaderboard</h1>
+  <button onclick="takeScreenshot()">Capture</button>
+  <br><br>
+  <img id="result" style="max-width:100%;" />
 
   <script>
-let leaderboardData = [];
-
-async function loadLeaderboard() {
-  try {
-    const res = await fetch(
-      "https://api.allorigins.win/raw?url=https://showdown.fortnite.com/en-US/creator-leaderboard"
-    );
-
-    const html = await res.text();
-
-    // Parse HTML
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const rows = doc.querySelectorAll(".leaderboard-row");
-
-    leaderboardData = [];
-
-    rows.forEach(row => {
-      const rank = parseInt(row.querySelector(".rank")?.innerText);
-      const points = parseInt(row.querySelector(".points")?.innerText);
-
-      if (!isNaN(rank) && !isNaN(points)) {
-        leaderboardData.push({ rank, points });
-      }
-    });
-
-    console.log("Loaded:", leaderboardData);
-
-    document.getElementById("result").innerText =
-      "Leaderboard loaded ✅";
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById("result").innerText =
-      "Failed to load leaderboard ❌";
-  }
-}
-
-function checkPlacement() {
-  const placement = parseInt(document.getElementById("placement").value);
-
-  if (!leaderboardData.length) {
-    document.getElementById("result").innerText =
-      "Still loading... try again in a second";
-    return;
-  }
-
-  const player = leaderboardData.find(p => p.rank === placement);
-
-  if (player) {
-    document.getElementById("result").innerText =
-      `Top ${placement} requires ~${player.points} points`;
-  } else {
-    document.getElementById("result").innerText =
-      "Placement not found (try a nearby number)";
-  }
-}
-
-loadLeaderboard();
-</script>
-
+    function takeScreenshot() {
+      document.getElementById("result").src =
+        "/screenshot?" + new Date().getTime();
+    }
+  </script>
 </body>
 </html>
