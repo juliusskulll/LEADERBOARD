@@ -2,69 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fortnite Tracker Stats</title>
+<title>Fortnite Stats (API)</title>
 <style>
-  body {font-family: Arial, sans-serif; background: #1a1a1a; color: #fff; text-align:center; padding: 40px;}
-  .stat {margin: 15px 0; font-size: 1.4em;}
-  input {padding: 10px; width: 200px; font-size: 1em;}
-  button {padding: 10px 15px; font-size: 1em; cursor:pointer;}
-  #loading {display:none;}
+  body { background:#111; color:#fff; font-family:Arial; text-align:center; }
+  input, button { padding:10px; margin:10px; }
 </style>
 </head>
 <body>
 
-<h1>Fortnite Stats Viewer</h1>
-<p>Enter an Epic Games username:</p>
+<h1>Fortnite Stats Tracker</h1>
 
-<input type="text" id="username" placeholder="hazelnutspread" value="hazelnutspread">
-<button onclick="fetchStats()">Get Stats</button>
+<input id="username" placeholder="hazelnutspread" value="hazelnutspread">
+<button onclick="getStats()">Get Stats</button>
 
-<div id="loading">⏳ Fetching stats...</div>
-
-<div id="results" style="display:none;">
-  <div class="stat"><strong>K/D:</strong> <span id="kd"></span></div>
-  <div class="stat"><strong>Wins:</strong> <span id="wins"></span></div>
-  <div class="stat"><strong>Matches:</strong> <span id="matches"></span></div>
-  <div class="stat"><strong>Top 5s:</strong> <span id="top5"></span></div>
-</div>
+<div id="output"></div>
 
 <script>
-async function fetchStats() {
-  // Get the username
-  const user = document.getElementById('username').value.trim();
-  if (!user) return alert('Please enter a username');
+async function getStats() {
+  const user = document.getElementById("username").value;
 
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('results').style.display = 'none';
+  // ⚠️ Replace with your API key from api-fortnite.com
+  const API_KEY = "YOUR_API_KEY_HERE";
 
   try {
-    const url = `https://api.allorigins.win/raw?url=https://fortnitetracker.com/showdown/epicgames_${encodeURIComponent(user)}`;
-    const response = await fetch(url);
-    const text = await response.text();
+    const res = await fetch(`https://api.fortniteapi.io/v1/stats?name=${user}`, {
+      headers: {
+        "Authorization": API_KEY
+      }
+    });
 
-    // Parse the scraped HTML
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(text, 'text/html');
+    const data = await res.json();
 
-    // Example selectors: These might change if fortnitetracker updates their layout
-    const kd = htmlDoc.querySelector('.trn-defstat__value:contains("K/D")')?.textContent || 'N/A';
-    const wins = htmlDoc.querySelector('.trn-defstat__value:contains("Wins")')?.textContent || 'N/A';
-    const matches = htmlDoc.querySelector('.trn-defstat__value:contains("Matches")')?.textContent || 'N/A';
-    const top5 = htmlDoc.querySelector('.trn-defstat__value:contains("Top 5")')?.textContent || 'N/A';
-
-    // Output to DOM
-    document.getElementById('kd').textContent = kd;
-    document.getElementById('wins').textContent = wins;
-    document.getElementById('matches').textContent = matches;
-    document.getElementById('top5').textContent = top5;
-
-    document.getElementById('results').style.display = 'block';
-  } catch (error) {
-    alert('Error fetching stats — maybe FortniteTracker layout changed.');
-    console.error(error);
-  } finally {
-    document.getElementById('loading').style.display = 'none';
+    document.getElementById("output").innerHTML = `
+      <h2>${data.name}</h2>
+      <p>Kills: ${data.global_stats.kills}</p>
+      <p>Wins: ${data.global_stats.wins}</p>
+      <p>Matches: ${data.global_stats.matches}</p>
+      <p>K/D: ${data.global_stats.kd}</p>
+    `;
+  } catch (e) {
+    document.getElementById("output").innerHTML = "Error fetching stats";
+    console.error(e);
   }
 }
 </script>
