@@ -16,7 +16,7 @@ app.get("/screenshot", async (req, res) => {
 
     const page = await browser.newPage();
 
-    const url = req.query.url || "https://fortnitetracker.com/leaderboards";
+    const url = req.query.url || "https://fortnitetracker.com/showdown/epicgames_hazelnutspread?window=hazelnutspread";
 
     await page.goto(url, {
       waitUntil: "networkidle2"
