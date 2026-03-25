@@ -18,9 +18,7 @@ app.get("/screenshot", async (req, res) => {
 
     const url = req.query.url || "https://fortnitetracker.com/showdown/epicgames_hazelnutspread?window=hazelnutspread";
 
-    await page.goto(url, {
-      waitUntil: "networkidle2"
-});
+    await page.goto(await new Promise(resolve => setTimeout(resolve, 3000));
     });
 
     // Wait for leaderboard table
