@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fortnite Tracker Screenshot</title>
+</head>
+<body>
+  <h1>Fortnite Tracker Screenshot</h1>
+  <input type="text" id="username" placeholder="Enter Fortnite username">
+  <button onclick="takeScreenshot()">Get Screenshot</button>
+  <div id="result"></div>
+
+  <script>
+    async function takeScreenshot() {
+      const username = document.getElementById('username').value.trim();
+      if (!username) return alert('Enter a username');
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = 'Loading...';
+
+      try {
+        const imgSrc = `/screenshot/${encodeURIComponent(username)}?t=${Date.now()}`;
+        resultDiv.innerHTML = `<img src="${imgSrc}" alt="Screenshot of ${username}" width="800">`;
+      } catch (err) {
+        resultDiv.innerHTML = 'Error taking screenshot';
+      }
+    }
+  </script>
+</body>
+</html>
