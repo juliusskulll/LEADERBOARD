@@ -10,6 +10,16 @@
   <img id="result" style="max-width:100%;" />
 
   <script>
+    <input id="urlInput" placeholder="Paste FortniteTracker URL" size="50">
+<button onclick="takeScreenshot()">Capture</button>
+
+
+function takeScreenshot() {
+  const url = document.getElementById("urlInput").value;
+  const img = document.getElementById("result");
+
+  img.src = "/screenshot?url=" + encodeURIComponent(url) + "&t=" + Date.now();
+}
     function takeScreenshot() {
       document.getElementById("result").src =
         "/screenshot?" + new Date().getTime();
