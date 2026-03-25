@@ -28,14 +28,7 @@ app.get("/screenshot", async (req, res) => {
 
     const screenshotPath = path.join(__dirname, "leaderboard.png");
 
-    // Option 1: Full page
-    await page.screenshot({
-      path: screenshotPath,
-      fullPage: true
-    });
-
-    // Option 2 (better): Only leaderboard
-    /*
+    
     const table = await page.$("table");
     await table.screenshot({ path: screenshotPath });
     */
