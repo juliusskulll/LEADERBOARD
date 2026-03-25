@@ -1,27 +1,51 @@
-import express from "express";
-import fetch from "node-fetch";
-import cheerio from "cheerio";
+const express = require("express");
+const puppeteer = require("puppeteer");
+const path = require("path");
 
 const app = express();
+const PORT = 3000;
 
-app.get("/leaderboard", async (req, res) => {
-  const url = "https://showdown.fortnite.com/en-US/creator-leaderboard";
+app.use(express.static("public"));
 
-  const response = await fetch(url);
-  const html = await response.text();
+app.get("/screenshot", async (req, res) => {
+  try {
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
 
-  const $ = cheerio.load(html);
+    const page = await browser.newPage();
 
-  const leaderboard = [];
+    await page.goto("https://fortnitetracker.com/leaderboards", {
+      waitUntil: "networkidle2"
+    });
 
-  $(".leaderboard-row").each((i, el) => {
-    const rank = parseInt($(el).find(".rank").text());
-    const points = parseInt($(el).find(".points").text());
+    // Wait for leaderboard table
+    await page.waitForSelector("table");
 
-    leaderboard.push({ rank, points });
-  });
+    const screenshotPath = path.join(__dirname, "leaderboard.png");
 
-  res.json(leaderboard);
+    // Option 1: Full page
+    await page.screenshot({
+      path: screenshotPath,
+      fullPage: true
+    });
+
+    // Option 2 (better): Only leaderboard
+    /*
+    const table = await page.$("table");
+    await table.screenshot({ path: screenshotPath });
+    */
+
+    await browser.close();
+
+    res.sendFile(screenshotPath);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error taking screenshot");
+  }
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
